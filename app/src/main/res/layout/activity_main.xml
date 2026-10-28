@@ -19,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <!-- Crear tarjeta principal-->
     <androidx.cardview.widget.CardView
         android:id="@+id/contenedor"
         android:layout_width="0dp"
@@ -32,7 +31,6 @@
         app:cardElevation="35dp"
         app:cardCornerRadius="25dp"
         android:backgroundTint="@color/white">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,8 +48,7 @@
                 android:textStyle="bold"
                 android:textColor="#395886"
                 android:layout_margin="15dp"
-                android:layout_marginBottom="30dp"
-               />
+                android:layout_marginBottom="30dp" />
 
             <EditText
                 android:id="@+id/etCorreo"

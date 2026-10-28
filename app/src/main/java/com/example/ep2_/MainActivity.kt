@@ -8,8 +8,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
     private lateinit var etCorreo : EditText
@@ -59,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             // Si la sesion es correcta
             Toast.makeText(this,"Bienvenido :D", Toast.LENGTH_SHORT).show()
 
-            val intent = Intent(this, HomeActivity::class.java)
+            val intent = Intent(this, RutaActivity::class.java)
             startActivity(intent)
             // Cerrar la Pantalla Actual
             finish()

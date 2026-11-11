@@ -3,6 +3,7 @@ package com.example.ep2_
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -27,8 +28,11 @@ class RutaActivity : AppCompatActivity() {
 
     private lateinit var etDestino: EditText
     private lateinit var btnBuscar: Button
+    private lateinit var btnVerMas: Button
     private lateinit var tvResultado: TextView
     private lateinit var imgDestino: ImageView
+
+    private var lugarActual: Lugar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +41,7 @@ class RutaActivity : AppCompatActivity() {
 
         etDestino = findViewById(R.id.etDestino)
         btnBuscar = findViewById(R.id.btnBuscar)
+        btnVerMas = findViewById(R.id.btnVerMas)
         tvResultado = findViewById(R.id.tvResultado)
         imgDestino = findViewById(R.id.imgDestino)
 
@@ -48,10 +53,23 @@ class RutaActivity : AppCompatActivity() {
                 Toast.makeText(this, "Ingresa un lugar de destino", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // Al hacer clic, enviamos toda la información a DetalleActivity
+        btnVerMas.setOnClickListener {
+            lugarActual?.let { lugar ->
+                val intent = Intent(this, DetalleActivity::class.java).apply {
+                    putExtra("EXTRA_NOMBRE", lugar.obtenerNombreCorto())
+                    putExtra("EXTRA_DIRECCION", lugar.display_name ?: "Sin dirección")
+                    putExtra("EXTRA_LAT", lugar.lat ?: "0.0")
+                    putExtra("EXTRA_LON", lugar.lon ?: "0.0")
+                    putExtra("EXTRA_CATEGORIA", lugar.categoria ?: "N/A")
+                }
+                startActivity(intent)
+            }
+        }
     }
 
     private fun obtenerUbicacionDestino(destino: String) {
-
         RetrofitClient.api.buscarLugar(
             consulta = destino,
             formato = "json",
@@ -59,24 +77,22 @@ class RutaActivity : AppCompatActivity() {
         ).enqueue(object : Callback<List<Lugar>> {
 
             override fun onResponse(call: Call<List<Lugar>>, response: Response<List<Lugar>>) {
-
                 val lugares = response.body()
 
                 if (!lugares.isNullOrEmpty()) {
-
                     val lugar = lugares[0]
+                    lugarActual = lugar
 
-                    // 1. Mostrar información textual
-                    tvResultado.text = "Lugar Encontrado: ${lugar.obtenerNombreCorto()}\n\n" +
-                            "Dirección Completa:\n${lugar.display_name}\n\n" +
-                            "Coordenadas:\n${lugar.obtenerCoordenadas()}\n\n" +
-                            "Categoría: ${lugar.categoria ?: "N/A"}"
+                    // 1. Mostrar SOLO el nombre del lugar encontrado
+                    tvResultado.text = "Lugar Encontrado: ${lugar.obtenerNombreCorto()}"
 
-                    // 2. Convertir coordenadas
+                    // 2. Hacer visible únicamente el botón "VER MÁS DETALLES"
+                    btnVerMas.visibility = View.VISIBLE
+
+                    // 3. Cargar el tile del mapa con Glide
                     val lat = lugar.lat?.toDoubleOrNull() ?: 0.0
                     val lon = lugar.lon?.toDoubleOrNull() ?: 0.0
 
-                    // 3. Obtener URL del mapa de OpenStreetMap y cargarlo con Glide
                     val urlTileOSM = obtenerUrlTileOSM(lat, lon, zoom = 16)
                     val glideUrl = GlideUrl(
                         urlTileOSM,
@@ -91,23 +107,25 @@ class RutaActivity : AppCompatActivity() {
                         .error(R.drawable.expopantalla)
                         .into(imgDestino)
 
-                    // 4. Configurar el evento de clic en la imagen del mapa para abrir Google Maps
                     imgDestino.setOnClickListener {
                         abrirEnGoogleMaps(lat, lon, lugar.obtenerNombreCorto())
                     }
 
                 } else {
+                    btnVerMas.visibility = View.GONE
+                    tvResultado.text = "No se encontraron resultados"
                     Toast.makeText(this@RutaActivity, "No se encontraron resultados", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<List<Lugar>>, t: Throwable) {
+                btnVerMas.visibility = View.GONE
+                tvResultado.text = "Error al conectar con la API"
                 Toast.makeText(this@RutaActivity, "Error en el API: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
-    // Metodo para abrir las coordenadas en Google Maps
     private fun abrirEnGoogleMaps(lat: Double, lon: Double, nombreLugar: String) {
         val uriMap = Uri.parse("geo:$lat,$lon?q=$lat,$lon(${Uri.encode(nombreLugar)})")
         val mapIntent = Intent(Intent.ACTION_VIEW, uriMap)
@@ -116,7 +134,6 @@ class RutaActivity : AppCompatActivity() {
         try {
             startActivity(mapIntent)
         } catch (e: Exception) {
-            // Si la aplicación de Google Maps no está disponible, lo abre en el navegador web
             val webUri = Uri.parse("https://www.google.com/maps/search/?api=1&query=$lat,$lon")
             val webIntent = Intent(Intent.ACTION_VIEW, webUri)
             startActivity(webIntent)

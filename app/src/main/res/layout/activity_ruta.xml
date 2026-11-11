@@ -199,6 +199,18 @@
                     android:textColor="#395886"
                     android:textSize="13sp" />
 
+                <!-- AGREGAR DEBAJO DE tvResultado -->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnVerMas"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/bg_button"
+                    android:text="VER MÁS DETALLES"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>

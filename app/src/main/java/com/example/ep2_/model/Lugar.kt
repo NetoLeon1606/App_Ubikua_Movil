@@ -20,7 +20,6 @@ data class Lugar(
     fun obtenerCoordenadas(): String {
         return "Lat: ${lat ?: "0.0"}, Lon: ${lon ?: "0.0"}"
     }
-
     fun obtenerNombreCorto(): String {
         return display_name?.split(",")?.firstOrNull() ?: "Ubicación sin nombre"
     }

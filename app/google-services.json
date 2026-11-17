@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "685328064807",
+    "project_id": "ubikua-d8376",
+    "storage_bucket": "ubikua-d8376.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685328064807:android:d05b3adc5d2edb4a660902",
+        "android_client_info": {
+          "package_name": "com.example.ep2_"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "685328064807-jp6bqd36f4mtki8b3uk1odguqm5q5ack.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ep2_",
+            "certificate_hash": "4bb97c0f883e477221b05ab2b773623609ecc8c4"
+          }
+        },
+        {
+          "client_id": "685328064807-i0d95ojfmscaa5g294vn9ddqnkvbkhns.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0ZBu1JEEc3sDYEfPRtv_mAbmpgvZQcLg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "685328064807-i0d95ojfmscaa5g294vn9ddqnkvbkhns.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

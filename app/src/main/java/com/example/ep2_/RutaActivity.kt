@@ -54,10 +54,11 @@ class RutaActivity : AppCompatActivity() {
             }
         }
 
-        // Al hacer clic, enviamos toda la información a DetalleActivity
+        // Al hacer clic, enviamos toda la información (incluido el ID único) a DetalleActivity
         btnVerMas.setOnClickListener {
             lugarActual?.let { lugar ->
                 val intent = Intent(this, DetalleActivity::class.java).apply {
+                    putExtra("EXTRA_PLACE_ID", lugar.place_id ?: -1L)
                     putExtra("EXTRA_NOMBRE", lugar.obtenerNombreCorto())
                     putExtra("EXTRA_DIRECCION", lugar.display_name ?: "Sin dirección")
                     putExtra("EXTRA_LAT", lugar.lat ?: "0.0")

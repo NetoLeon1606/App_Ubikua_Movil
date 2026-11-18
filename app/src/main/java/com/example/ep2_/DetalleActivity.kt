@@ -7,6 +7,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 class DetalleActivity : AppCompatActivity() {
 
@@ -35,39 +37,49 @@ class DetalleActivity : AppCompatActivity() {
         btnFavorito = findViewById(R.id.btnFavorito)
 
         mostrarInformacionLugar()
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
     }
 
-    // Metodo para obtener toda la informacion y gestionar favoritos
     private fun mostrarInformacionLugar() {
-
-        val placeId = intent.getLongExtra("EXTRA_PLACE_ID", -1L)
+        val rawPlaceId = intent.getLongExtra("EXTRA_PLACE_ID", -1L)
         val nombre = intent.getStringExtra("EXTRA_NOMBRE") ?: "Lugar Desconocido"
         val direccion = intent.getStringExtra("EXTRA_DIRECCION") ?: "Sin Dirección"
         val lat = intent.getStringExtra("EXTRA_LAT") ?: "0.0"
         val lon = intent.getStringExtra("EXTRA_LON") ?: "0.0"
         val categoria = intent.getStringExtra("EXTRA_CATEGORIA") ?: "N/A"
 
-        // Asignar valores a la vista
+        // Si el API no devuelve place_id, se genera un ID único basado en sus datos
+        val placeId = if (rawPlaceId != -1L) {
+            rawPlaceId
+        } else {
+            "$nombre$lat$lon".hashCode().toLong()
+        }
+
+        // Mostrar datos en pantalla
         tvNombreDetalle.text = nombre
         tvDireccionDetalle.text = direccion
         tvCoordenadasDetalle.text = "Lat: $lat, Lon: $lon"
         tvCategoriaDetalle.text = categoria
 
-        // Validacion inicial para verificar si el lugar ya existe en favoritos
-        if (placeId != -1L) {
-            lugarFavorito = dbHelper.existeLugarFavorito(placeId)
-            actualizarInterfazFavorito()
-        }
+        // 1. Verificar en SQLite si el lugar ya estaba guardado previamente
+        lugarFavorito = dbHelper.existeLugarFavorito(placeId)
+        actualizarEstadoBoton()
 
-        // Funcion reutilizable para guardar o eliminar al presionar cualquiera de los 2 botones
-        val alternarFavorito = {
+        // 2. Acción de guardar o eliminar al presionar el botón
+        val gestionarFavorito = {
             if (lugarFavorito) {
                 val eliminado = dbHelper.eliminarLugarFavorito(placeId)
-
                 if (eliminado) {
-                    lugarFavorito = !lugarFavorito
-                    actualizarInterfazFavorito()
+                    lugarFavorito = false
+                    actualizarEstadoBoton()
                     Toast.makeText(this, "$nombre eliminado de favoritos", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "No se pudo eliminar de favoritos", Toast.LENGTH_SHORT).show()
                 }
             } else {
                 val guardado = dbHelper.guardarLugarFavorito(
@@ -78,21 +90,21 @@ class DetalleActivity : AppCompatActivity() {
                     longitud = lon,
                     categoria = categoria
                 )
-
                 if (guardado) {
-                    lugarFavorito = !lugarFavorito
-                    actualizarInterfazFavorito()
-                    Toast.makeText(this, "$nombre agregado a favoritos", Toast.LENGTH_SHORT).show()
+                    lugarFavorito = true
+                    actualizarEstadoBoton()
+                    Toast.makeText(this, "$nombre guardado en favoritos", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Error al guardar en favoritos", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        btnFavorito.setOnClickListener { alternarFavorito() }
-        btnGuardarBD.setOnClickListener { alternarFavorito() }
+        btnFavorito.setOnClickListener { gestionarFavorito() }
+        btnGuardarBD.setOnClickListener { gestionarFavorito() }
     }
 
-    // Actualiza el icono del corazon y el texto del boton segun el estado en la BD
-    private fun actualizarInterfazFavorito() {
+    private fun actualizarEstadoBoton() {
         if (lugarFavorito) {
             btnFavorito.setImageResource(R.drawable.favorito)
             btnGuardarBD.text = "ELIMINAR DE FAVORITOS"

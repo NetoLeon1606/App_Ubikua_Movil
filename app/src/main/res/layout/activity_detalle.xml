@@ -24,7 +24,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Boton favorito ubicado en la esquina superior derecha -->
         <ImageButton
             android:id="@+id/btnFavorito"
             android:layout_width="52dp"
@@ -32,11 +31,12 @@
             android:layout_marginTop="40dp"
             android:layout_marginEnd="20dp"
             android:background="@drawable/bg_buton_circular"
+            android:contentDescription="Guardar o eliminar de favoritos"
             android:padding="15dp"
             android:src="@drawable/no_favorite"
-            app:tint="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/contenedor"

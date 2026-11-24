@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.ep2_.model.LugarFavorito
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(
     context,
@@ -168,5 +169,29 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
         db.close()
 
         return existe
+    }
+
+    fun obtenerLugaresFavoritos(): List<LugarFavorito> {
+        val lista = mutableListOf<LugarFavorito>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM favoritos", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val lugar = LugarFavorito(
+                    placeId = cursor.getLong(cursor.getColumnIndexOrThrow("place_id")),
+                    nombreLugar = cursor.getString(cursor.getColumnIndexOrThrow("nombre_lugar")),
+                    direccion = cursor.getString(cursor.getColumnIndexOrThrow("direccion")) ?: "Sin dirección",
+                    latitud = cursor.getString(cursor.getColumnIndexOrThrow("latitud")) ?: "0.0",
+                    longitud = cursor.getString(cursor.getColumnIndexOrThrow("longitud")) ?: "0.0",
+                    categoria = cursor.getString(cursor.getColumnIndexOrThrow("categoria")) ?: "N/A"
+                )
+                lista.add(lugar)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return lista
     }
 }

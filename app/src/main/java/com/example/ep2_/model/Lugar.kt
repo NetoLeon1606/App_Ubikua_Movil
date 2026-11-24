@@ -23,4 +23,5 @@ data class Lugar(
     fun obtenerNombreCorto(): String {
         return display_name?.split(",")?.firstOrNull() ?: "Ubicación sin nombre"
     }
+
 }

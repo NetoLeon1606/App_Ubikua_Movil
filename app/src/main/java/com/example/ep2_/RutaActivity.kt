@@ -11,11 +11,16 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.credentials.CredentialManager
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.example.ep2_.model.Lugar
 import com.example.ep2_.network.RetrofitClient
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,6 +39,11 @@ class RutaActivity : AppCompatActivity() {
 
     private var lugarActual: Lugar? = null
 
+    // Propiedades dentro de RutaActivity
+    private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var auth: FirebaseAuth
+    private lateinit var credentialManager: CredentialManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -44,6 +54,12 @@ class RutaActivity : AppCompatActivity() {
         btnVerMas = findViewById(R.id.btnVerMas)
         tvResultado = findViewById(R.id.tvResultado)
         imgDestino = findViewById(R.id.imgDestino)
+
+        bottomNavigationView = findViewById(R.id.bottomNavigation)
+        auth = FirebaseAuth.getInstance()
+        credentialManager = CredentialManager.create(this)
+
+        menuNavegacion()
 
         btnBuscar.setOnClickListener {
             val destino = etDestino.text.toString().trim()
@@ -148,4 +164,47 @@ class RutaActivity : AppCompatActivity() {
         val y = ((1.0 - ln(tan(latRad) + 1.0 / cos(latRad)) / PI) / 2.0 * n).toInt()
         return "https://tile.openstreetmap.org/$zoom/$x/$y.png"
     }
+
+    override fun onResume() {
+        super.onResume()
+        bottomNavigationView.selectedItemId = R.id.nav_inicio
+    }
+
+    private fun menuNavegacion() {
+        bottomNavigationView.selectedItemId = R.id.nav_inicio
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_inicio -> true
+                R.id.nav_favoritos -> {
+                    startActivity(Intent(this, FavoritosActivity::class.java))
+                    true
+                }
+                R.id.nav_salir -> {
+                    cerrarSesionGoogle()
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun cerrarSesionGoogle() {
+        auth.signOut()
+
+        lifecycleScope.launch {
+            try {
+                credentialManager.clearCredentialState(
+                    androidx.credentials.ClearCredentialStateRequest()
+                )
+            } catch (e: Exception) {
+                Toast.makeText(this@RutaActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+
+            val intent = Intent(this@RutaActivity, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+    }
+
 }

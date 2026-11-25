@@ -1,71 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
-    android:background="@android:color/white"
-    android:elevation="6dp"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:padding="16dp">
+    android:layout_columnWeight="1"
+    android:layout_margin="6dp"
+    android:backgroundTint="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvItemNombre"
+        <ImageView
+            android:id="@+id/imgFavoritoMapa"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Nombre del Lugar"
-            android:textColor="#395886"
-            android:textSize="17sp"
-            android:textStyle="bold" />
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/expopantalla" />
 
-        <TextView
-            android:id="@+id/tvItemCategoria"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Categoría: N/A"
-            android:textColor="#555555"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:padding="10dp">
 
-        <TextView
-            android:id="@+id/tvItemDireccion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="Dirección completa"
-            android:textColor="#333333"
-            android:textSize="13sp" />
+            <TextView
+                android:id="@+id/tvFavoritoNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Nombre del Lugar"
+                android:textColor="#395886"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvItemCoordenadas"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Lat: 0.0, Lon: 0.0"
-            android:textColor="#777777"
-            android:textSize="12sp" />
+            <TextView
+                android:id="@+id/tvFavoritoCategoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Categoría"
+                android:textColor="#666666"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/btnItemEliminar"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="10dp"
-        android:background="@drawable/bg_buton_circular"
-        android:contentDescription="Eliminar de favoritos"
-        android:padding="10dp"
-        android:src="@drawable/favorito"
-        app:tint="#FFFFFF" />
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>

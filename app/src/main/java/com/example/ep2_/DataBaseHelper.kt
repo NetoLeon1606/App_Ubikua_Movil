@@ -33,6 +33,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
         const val COL_LATITUD = "latitud"
         const val COL_LONGITUD = "longitud"
         const val COL_CATEGORIA = "categoria"
+        const val COL_FAV_ID = "id"
 
         // Crear tabla de usuarios
         private const val CREATE_TABLE_USUARIOS = """
@@ -194,4 +195,5 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
         db.close()
         return lista
     }
+
 }
